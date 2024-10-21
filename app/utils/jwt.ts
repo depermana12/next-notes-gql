@@ -19,8 +19,8 @@ export const verifyUserToken = (token: string) => {
   }
 };
 
-export const getUserFromToken = async (header?: string) => {
-  if (!header || !header.startsWith("Bearer ")) {
+export const getUserFromToken = async (header: string) => {
+  if (!header || !header.startsWith("Bearer")) {
     // TODO: error handling
     console.error("invalid token");
     return null;

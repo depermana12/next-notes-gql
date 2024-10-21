@@ -9,7 +9,9 @@ interface SignInArgs {
   password: string;
 }
 
-export const signIn = async ({ email, password }: SignInArgs) => {
+export const signIn = async (signIn: SignInArgs) => {
+  const { email, password } = signIn;
+
   const user = await db.query.users.findFirst({
     where: eq(users.email, email),
   });
@@ -41,7 +43,9 @@ interface SignUpArgs {
   password: string;
 }
 
-export const signUp = async ({ username, email, password }: SignUpArgs) => {
+export const signUp = async (newSignup: SignUpArgs) => {
+  const { username, email, password } = newSignup;
+
   const hashedPassword = await pwd.hash(password);
 
   const rows = await db
