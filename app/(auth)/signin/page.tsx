@@ -24,7 +24,7 @@ import { z } from "zod";
 import Link from "next/link";
 import { useMutation } from "urql";
 import { SigninMut } from "@/graphql/mutations/signin";
-import { setToken } from "@/app/utils/token";
+import { setToken, setUser } from "@/app/utils/token";
 import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
@@ -54,8 +54,9 @@ const SignInPage = () => {
     }
 
     if (result.data?.login) {
-      console.log("user created successfully");
-      setToken(result.data.login.token);
+      const { username, email, token } = result.data.login;
+      setToken(token);
+      setUser(username, email);
       router.push("/notes");
     }
   };

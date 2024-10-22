@@ -5,6 +5,8 @@ export const SigninMut = gql`
     login(input: $input) {
       id
       token
+      username
+      email
     }
   }
 `;

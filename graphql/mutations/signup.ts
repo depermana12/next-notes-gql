@@ -5,6 +5,8 @@ export const SignupMut = gql`
     register(input: $input) {
       id
       token
+      username
+      email
     }
   }
 `;
