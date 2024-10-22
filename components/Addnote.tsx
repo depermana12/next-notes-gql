@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -16,9 +17,19 @@ import { CirclePlus } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 
-export function AddNoteDialog() {
+interface AddNoteDialogProps {
+  onAddNote: (note: { title: string; content: string }) => void;
+}
+
+export function AddNoteDialog({ onAddNote }: AddNoteDialogProps) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+
+  const handleSubmit = () => {
+    onAddNote({ title, content });
+    setTitle("");
+    setContent("");
+  };
 
   return (
     <Dialog>
@@ -59,7 +70,11 @@ export function AddNoteDialog() {
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit">Save Note</Button>
+          <DialogClose asChild>
+            <Button onClick={handleSubmit} type="submit">
+              Save Note
+            </Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
