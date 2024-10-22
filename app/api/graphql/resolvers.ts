@@ -31,11 +31,15 @@ const resolvers = {
       if (!ctx.user)
         throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
 
-      const notesList = await db.query.notes.findFirst({
+      const notesList = await db.query.notes.findMany({
         where: eq(notes.author, ctx.user.id),
       });
 
-      return notesList;
+      return notesList.map((note) => ({
+        ...note,
+        createdAt: note.created_at,
+        updatedAt: note.updated_at,
+      }));
     },
     note: async (_: any, { id }: { id: number }, ctx: authContext) => {
       if (!ctx.user)
@@ -48,7 +52,11 @@ const resolvers = {
       if (!note)
         throw new GraphQLError("Note not found", { extensions: { code: 404 } });
 
-      return note;
+      return {
+        ...note,
+        createdAt: note.created_at,
+        updatedAt: note.updated_at,
+      };
     },
     searchNotes: async (
       _: any,
@@ -67,7 +75,11 @@ const resolvers = {
           ),
         ),
       });
-      return result;
+      return result.map((note) => ({
+        ...note,
+        createdAt: note.created_at,
+        updatedAt: note.updated_at,
+      }));
     },
     tags: async (_: any, __: any, ctx: authContext) => {
       if (!ctx.user) {
@@ -136,6 +148,8 @@ const resolvers = {
           id: notes.id,
           title: notes.title,
           content: notes.content,
+          createdAt: notes.created_at,
+          updatedAt: notes.updated_at,
         });
 
       return newNote[0];
@@ -153,7 +167,13 @@ const resolvers = {
         .update(notes)
         .set({ ...input, updated_at: new Date() })
         .where(and(eq(notes.id, id), eq(notes.author, ctx.user.id)))
-        .returning();
+        .returning({
+          id: notes.id,
+          title: notes.title,
+          content: notes.content,
+          createdAt: notes.created_at,
+          updatedAt: notes.updated_at,
+        });
 
       return updated[0];
     },
@@ -187,9 +207,15 @@ const resolvers = {
         throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
       }
 
-      return await db.query.notes.findMany({
+      const result = await db.query.notes.findMany({
         where: eq(notes.author, user.id),
       });
+
+      return result.map((note) => ({
+        ...note,
+        createdAt: note.created_at,
+        updatedAt: note.updated_at,
+      }));
     },
   },
 };
