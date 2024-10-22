@@ -11,6 +11,8 @@
   "dependencies": {
     "@apollo/server": "^4.11.0",
     "@as-integrations/next": "^3.1.0",
+    "@hookform/resolvers": "^3.9.0",
+    "@radix-ui/react-label": "^2.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "@urql/exchange-graphcache": "^7.2.1",
     "@urql/next": "^1.1.2",
@@ -27,9 +29,11 @@
     "pg": "^8.13.0",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.53.1",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
-    "urql": "^4.2.0"
+    "urql": "^4.2.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
