@@ -22,6 +22,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
+import { useMutation } from "urql";
+import { SignupMut } from "@/graphql/mutations/signup";
+import { setToken } from "@/app/utils/token";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   username: z.string().min(2).max(50),
@@ -30,6 +34,10 @@ const formSchema = z.object({
 });
 
 const SignUpPage = () => {
+  const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [signupResult, signup] = useMutation(SignupMut);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,8 +47,19 @@ const SignUpPage = () => {
     },
   });
 
-  const onSubmit = (value: z.infer<typeof formSchema>) => {
-    console.log(value);
+  const onSubmit = async (value: z.infer<typeof formSchema>) => {
+    const result = await signup({ input: value });
+
+    if (result.error) {
+      console.error("signup error:", result.error);
+      return;
+    }
+
+    if (result.data?.register) {
+      console.log("user created successfully");
+      setToken(result.data.register.token);
+      router.push("/notes");
+    }
   };
 
   return (
