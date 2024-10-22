@@ -19,7 +19,9 @@ const NoteCard = ({ note }: { note: Note }) => {
         <CardTitle>{note.title}</CardTitle>
       </CardHeader>
       <CardContent>{note.content}</CardContent>
-      <CardFooter>{note.createdAt}</CardFooter>
+      <CardFooter>
+        {new Date(Number(note.createdAt)).toLocaleString()}
+      </CardFooter>
     </Card>
   );
 };
