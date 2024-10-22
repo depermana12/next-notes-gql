@@ -63,7 +63,7 @@ const typeDefs = `#graphql
     removeUser(id: ID!): Boolean!
 
     addNote(input: AddNoteInput!): Note!
-    updateNote(input: UpdateNoteInput): Note!
+    updateNote(id: ID, input: UpdateNoteInput): Note!
     removeNote(id: ID!): Boolean!
 
     addTag(name: String!): Tag!
