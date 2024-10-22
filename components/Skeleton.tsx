@@ -2,15 +2,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const SkeletonLoader = () => {
   return (
-    <div className="grid grid-cols-4 grid-rows-2 gap-4">
-      <Skeleton className="h-[125px] w-full rounded-xl" />
-      <Skeleton className="h-[125px] w-full rounded-xl" />
-      <Skeleton className="h-[125px] w-full rounded-xl" />
-      <Skeleton className="h-[125px] w-full rounded-xl" />
-      <Skeleton className="h-[125px] w-full rounded-xl" />
-      <Skeleton className="h-[125px] w-full rounded-xl" />
-      <Skeleton className="h-[125px] w-full rounded-xl" />
-      <Skeleton className="h-[125px] w-full rounded-xl" />
+    <div className="flex flex-1 flex-col gap-4 p-4">
+      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+        <Skeleton className="h-[125px] w-[350px] rounded-xl" />
+      </div>
     </div>
   );
 };

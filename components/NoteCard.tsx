@@ -1,4 +1,12 @@
 import {
+  Menubar,
+  MenubarMenu,
+  MenubarTrigger,
+  MenubarContent,
+  MenubarItem,
+} from "@/components/ui/menubar";
+import { EllipsisVertical } from "lucide-react";
+import {
   Card,
   CardHeader,
   CardTitle,
@@ -16,10 +24,23 @@ const NoteCard = ({ note }: { note: Note }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{note.title}</CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle>{note.title}</CardTitle>
+          <Menubar className="border-none mx-0">
+            <MenubarMenu>
+              <MenubarTrigger>
+                <EllipsisVertical size={20} />
+              </MenubarTrigger>
+              <MenubarContent>
+                <MenubarItem>Edit</MenubarItem>
+                <MenubarItem>Delete</MenubarItem>
+              </MenubarContent>
+            </MenubarMenu>
+          </Menubar>
+        </div>
       </CardHeader>
       <CardContent>{note.content}</CardContent>
-      <CardFooter>
+      <CardFooter className="text-xs">
         {new Date(Number(note.createdAt)).toLocaleString()}
       </CardFooter>
     </Card>
