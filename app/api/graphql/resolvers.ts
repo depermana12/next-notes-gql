@@ -181,6 +181,17 @@ const resolvers = {
       });
     },
   },
+  User: {
+    notes: async (user: any, _: any, ctx: authContext) => {
+      if (!ctx.user) {
+        throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
+      }
+
+      return await db.query.notes.findMany({
+        where: eq(notes.author, user.id),
+      });
+    },
+  },
 };
 
 export default resolvers;
