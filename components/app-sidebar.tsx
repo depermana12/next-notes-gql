@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 
 // TODO: pass user data from auth provider
+
 const data = {
   user: {
     name: "shadcn",

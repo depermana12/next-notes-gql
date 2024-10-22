@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { AddNoteDialog } from "@/components/dash-addnote";
+import { AddNoteDialog } from "@/components/Addnote";
 
 const page = () => {
   return (

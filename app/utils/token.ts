@@ -12,6 +12,12 @@ export const setToken = (token: string): void => {
     return localStorage.setItem(tokenKey, token);
 };
 
+export const removeToken = () => {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem(tokenKey);
+  }
+};
+
 export const isAuth = (): boolean => {
   return Boolean(getToken());
 };
