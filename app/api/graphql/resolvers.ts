@@ -5,6 +5,7 @@ import { eq, and, like, or } from "drizzle-orm";
 import { authContext } from "@/app/types/types";
 import { signUp, signIn } from "@/app/utils/auth";
 import { GraphQLError } from "graphql";
+import getPaginatedNotes from "@/lib/noteService";
 
 const resolvers = {
   Query: {
@@ -40,6 +41,25 @@ const resolvers = {
         createdAt: note.created_at,
         updatedAt: note.updated_at,
       }));
+    },
+    paginatedNotes: async (
+      _: any,
+      { limit, offset }: { limit: number; offset: number },
+      ctx: authContext,
+    ) => {
+      if (!ctx.user)
+        throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
+
+      const { notes, total } = await getPaginatedNotes(
+        ctx.user.id,
+        limit,
+        offset,
+      );
+      console.log("total notes", total);
+      const totalPages = Math.ceil(total / limit);
+      const currentPage = offset / limit + 1;
+
+      return { notes, total, totalPages, currentPage };
     },
     note: async (_: any, { id }: { id: number }, ctx: authContext) => {
       if (!ctx.user)

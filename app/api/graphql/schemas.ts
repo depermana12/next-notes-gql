@@ -18,6 +18,13 @@ const typeDefs = `#graphql
     author: User!
   }
 
+  type PaginatedNotes {
+    notes: [Note!]!
+    total: Int!
+    currentPage: Int!
+    totalPages: Int!
+  }
+
   type Tag {
     id: ID!
     name: String!
@@ -51,6 +58,7 @@ const typeDefs = `#graphql
     me: User!
     user(id: ID!): User
     notes: [Note!]
+    paginatedNotes(limit: Int!, offset: Int!): PaginatedNotes!
     note(id: ID!): Note
     searchNotes(term: String!): [Note!]
     tags: [Tag]!
