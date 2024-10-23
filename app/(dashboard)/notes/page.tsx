@@ -7,6 +7,7 @@ import SkeletonLoader from "@/components/Skeleton";
 import NoteCard from "@/components/NoteCard";
 import { AddNoteMut } from "@/graphql/mutations/addnote";
 import { EditNoteMut } from "@/graphql/mutations/editnote";
+import { DeleteNoteMut } from "@/graphql/mutations/deletenote";
 import { useState } from "react";
 import { Note } from "@/components/NoteCard";
 
@@ -17,9 +18,10 @@ interface AddNoteInput {
 }
 
 const NotesPage = () => {
-  const [{ data, fetching, error }] = useQuery({ query: NotesQuery });
+  const [{ data, fetching, error }, replay] = useQuery({ query: NotesQuery });
   const [, addNote] = useMutation(AddNoteMut);
   const [, editNote] = useMutation(EditNoteMut);
+  const [, deleteNote] = useMutation(DeleteNoteMut);
 
   const [dialogState, setDialogState] = useState<{
     isOpen: boolean;
@@ -40,6 +42,11 @@ const NotesPage = () => {
       if (result.error) console.error("failed to edit note:", result.error);
     }
     setDialogState({ isOpen: false, noteToEdit: null });
+  };
+
+  const onDeleteNote = async (noteId: number) => {
+    await deleteNote({ removeNoteId: noteId });
+    replay({ requestPolicy: "network-only" });
   };
 
   const openAddDialog = () => {
@@ -70,7 +77,12 @@ const NotesPage = () => {
         {error && <p>Error: {error.message}</p>}
         {data &&
           data.notes.map((note: Note) => (
-            <NoteCard onEdit={openEditDialog} key={note.id} note={note} />
+            <NoteCard
+              onEdit={openEditDialog}
+              key={note.id}
+              note={note}
+              onDeleteNote={onDeleteNote}
+            />
           ))}
       </div>
     </div>

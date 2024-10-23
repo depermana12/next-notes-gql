@@ -21,13 +21,13 @@ export interface Note {
   createdAt: string;
 }
 
-const NoteCard = ({
-  note,
-  onEdit,
-}: {
+interface NoteCardProps {
   note: Note;
   onEdit: (note: Note) => void;
-}) => {
+  onDeleteNote: (noteId: number) => void;
+}
+
+const NoteCard = ({ note, onEdit, onDeleteNote }: NoteCardProps) => {
   return (
     <Card>
       <CardHeader>
@@ -40,7 +40,9 @@ const NoteCard = ({
               </MenubarTrigger>
               <MenubarContent>
                 <MenubarItem onClick={() => onEdit(note)}>Edit</MenubarItem>
-                <MenubarItem>Delete</MenubarItem>
+                <MenubarItem onClick={() => onDeleteNote(note.id)}>
+                  Delete
+                </MenubarItem>
               </MenubarContent>
             </MenubarMenu>
           </Menubar>
