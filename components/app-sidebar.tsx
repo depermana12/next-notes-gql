@@ -1,11 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { BookOpen, GalleryVerticalEnd, Settings2 } from "lucide-react";
+import { BookOpen, Settings2 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -13,50 +12,8 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
-
-// TODO: pass user data from auth provider
-
-const data = {
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-  ],
-  navMain: [
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-      ],
-    },
-  ],
-};
+import HeaderLogo from "./HeaderLogo";
+import { removeToken } from "@/app/utils/token";
 
 export function AppSidebar({
   user,
@@ -64,10 +21,54 @@ export function AppSidebar({
 }: {
   user: { username: string; email: string };
 } & React.ComponentProps<typeof Sidebar>) {
+  const handleSignOut = () => {
+    removeToken();
+  };
+
+  const data = {
+    navMain: [
+      {
+        title: "Documentation",
+        url: "#",
+        icon: BookOpen,
+        items: [
+          {
+            title: "Introduction",
+            url: "#",
+          },
+          {
+            title: "Get Started",
+            url: "#",
+          },
+          {
+            title: "Tutorials",
+            url: "#",
+          },
+        ],
+      },
+      {
+        title: "Settings",
+        url: "#",
+        icon: Settings2,
+        items: [
+          {
+            title: "Profile",
+            url: "#",
+          },
+          {
+            title: "Sign Out",
+            url: "#",
+            event: handleSignOut,
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <HeaderLogo />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

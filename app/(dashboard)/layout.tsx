@@ -4,15 +4,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { useEffect, useState } from "react";
 import { isAuth } from "../utils/token";
 import { redirect } from "next/navigation";
-import {
-  Breadcrumb,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-  BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
-import Link from "next/link";
+import BreadCrumbStatic from "@/components/BreadCrumbStatic";
 import { Separator } from "@/components/ui/separator";
 
 export default function DashboardLayout({
@@ -41,23 +33,7 @@ export default function DashboardLayout({
         <header className="flex sticky top-0 bg-background h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger />
           <Separator orientation="vertical" className="h-8" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink asChild>
-                  <Link href="/">Home</Link>
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Dashboard</BreadcrumbPage>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator />
-              <BreadcrumbLink asChild>
-                <Link href="/notes">Notes</Link>
-              </BreadcrumbLink>
-            </BreadcrumbList>
-          </Breadcrumb>
+          <BreadCrumbStatic />
         </header>
         {children}
       </main>
