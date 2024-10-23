@@ -14,13 +14,20 @@ import {
   CardFooter,
 } from "./ui/card";
 
-interface Note {
+export interface Note {
+  id: number;
   title: string;
   content: string;
   createdAt: string;
 }
 
-const NoteCard = ({ note }: { note: Note }) => {
+const NoteCard = ({
+  note,
+  onEdit,
+}: {
+  note: Note;
+  onEdit: (note: Note) => void;
+}) => {
   return (
     <Card>
       <CardHeader>
@@ -32,7 +39,7 @@ const NoteCard = ({ note }: { note: Note }) => {
                 <EllipsisVertical size={20} />
               </MenubarTrigger>
               <MenubarContent>
-                <MenubarItem>Edit</MenubarItem>
+                <MenubarItem onClick={() => onEdit(note)}>Edit</MenubarItem>
                 <MenubarItem>Delete</MenubarItem>
               </MenubarContent>
             </MenubarMenu>

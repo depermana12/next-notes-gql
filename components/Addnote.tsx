@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -15,34 +14,76 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CirclePlus } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-interface AddNoteDialogProps {
-  onAddNote: (note: { title: string; content: string }) => void;
+interface Note {
+  id: number;
+  title: string;
+  content: string;
+  createdAt?: string;
 }
 
-export function AddNoteDialog({ onAddNote }: AddNoteDialogProps) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+interface AddNoteInput {
+  id?: number;
+  title: string;
+  content: string;
+}
+interface AddNoteDialogProps {
+  dialogState: { isOpen: boolean; noteToEdit: Note | null };
+  onAddNote: (note: AddNoteInput) => void;
+  onEditNote: (note: AddNoteInput) => void;
+  onClose: () => void;
+  onAddDialog: () => void;
+}
+
+export function AddNoteDialog({
+  dialogState,
+  onAddNote,
+  onEditNote,
+  onClose,
+  onAddDialog,
+}: AddNoteDialogProps) {
+  const [title, setTitle] = useState(dialogState.noteToEdit?.title || "");
+  const [content, setContent] = useState(dialogState.noteToEdit?.content || "");
 
   const handleSubmit = () => {
-    onAddNote({ title, content });
+    const noteData = { title, content };
+
+    if (dialogState.noteToEdit) {
+      onEditNote({ ...noteData });
+    } else {
+      onAddNote(noteData);
+    }
     setTitle("");
     setContent("");
+    onClose();
   };
 
+  useEffect(() => {
+    if (dialogState.noteToEdit) {
+      setTitle(dialogState.noteToEdit.title);
+      setContent(dialogState.noteToEdit.content);
+    } else {
+      setTitle("");
+      setContent("");
+    }
+  }, [dialogState.noteToEdit]);
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>
-          <CirclePlus /> Add new note
-        </Button>
-      </DialogTrigger>
+    <Dialog open={dialogState.isOpen} onOpenChange={onClose}>
+      <Button onClick={onAddDialog}>
+        <CirclePlus /> Add new note
+      </Button>
+
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add a new note</DialogTitle>
+          <DialogTitle>
+            {dialogState.noteToEdit ? "Edit your note" : "Add a new note"}
+          </DialogTitle>
           <DialogDescription>
-            Write your note below. Click save when you&apos;re done.
+            {dialogState.noteToEdit
+              ? "Modify your note below. Click save when you're done."
+              : "Write your note below. Click save when you're done."}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -70,11 +111,9 @@ export function AddNoteDialog({ onAddNote }: AddNoteDialogProps) {
           </div>
         </div>
         <DialogFooter>
-          <DialogClose asChild>
-            <Button onClick={handleSubmit} type="submit">
-              Save Note
-            </Button>
-          </DialogClose>
+          <Button onClick={handleSubmit} type="submit">
+            {dialogState.noteToEdit ? "Save Changes" : "Save Note"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
