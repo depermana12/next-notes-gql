@@ -55,11 +55,7 @@ const resolvers = {
         limit,
         offset,
       );
-      console.log("total notes", total);
-      const totalPages = Math.ceil(total / limit);
-      const currentPage = offset / limit + 1;
-
-      return { notes, total, totalPages, currentPage };
+      return { notes, total };
     },
     note: async (_: any, { id }: { id: number }, ctx: authContext) => {
       if (!ctx.user)

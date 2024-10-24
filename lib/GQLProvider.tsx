@@ -19,7 +19,15 @@ export default function GQLProvider({ children }: PropsWithChildren) {
 
     const client = createClient({
       url,
-      exchanges: [cacheExchange({}), ssr, fetchExchange],
+      exchanges: [
+        cacheExchange({
+          keys: {
+            PaginatedNotes: () => null,
+          },
+        }),
+        ssr,
+        fetchExchange,
+      ],
       fetchOptions: () => {
         const token = getToken();
 
