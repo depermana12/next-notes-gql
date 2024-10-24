@@ -37,7 +37,7 @@ interface AddNoteInput {
 // `;
 
 const NotesPage = () => {
-  const notesPerPage = 5;
+  const notesPerPage = 8;
   const [pageVariables, setPageVariables] = useState({
     limit: notesPerPage,
     offset: 0,

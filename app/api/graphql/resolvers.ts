@@ -5,7 +5,8 @@ import { eq, and, like, or } from "drizzle-orm";
 import { authContext } from "@/app/types/types";
 import { signUp, signIn } from "@/app/utils/auth";
 import { GraphQLError } from "graphql";
-import getPaginatedNotes from "@/lib/noteService";
+import userService from "@/lib/userService";
+import noteService from "@/lib/noteService";
 
 const resolvers = {
   Query: {
@@ -19,28 +20,13 @@ const resolvers = {
       if (!ctx.user)
         throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
 
-      const user = await db.query.users.findFirst({
-        where: eq(users.id, id),
-      });
-
-      if (!user)
-        throw new GraphQLError("User not found", { extensions: { code: 404 } });
-
-      return user;
+      return await userService.getUserById(id);
     },
     notes: async (_: any, __: any, ctx: authContext) => {
       if (!ctx.user)
         throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
 
-      const notesList = await db.query.notes.findMany({
-        where: eq(notes.author, ctx.user.id),
-      });
-
-      return notesList.map((note) => ({
-        ...note,
-        createdAt: note.created_at,
-        updatedAt: note.updated_at,
-      }));
+      return await noteService.getAllNotes(ctx.user.id);
     },
     paginatedNotes: async (
       _: any,
@@ -50,7 +36,7 @@ const resolvers = {
       if (!ctx.user)
         throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
 
-      const { notes, total } = await getPaginatedNotes(
+      const { notes, total } = await noteService.getPaginatedNotes(
         ctx.user.id,
         limit,
         offset,

@@ -1,6 +1,6 @@
 import db from "@/app/db/db";
 import { notes } from "@/app/db/schema";
-import { count, desc, eq } from "drizzle-orm";
+import { count, eq, asc } from "drizzle-orm";
 
 const getPaginatedNotes = async (
   userId: number,
@@ -11,7 +11,7 @@ const getPaginatedNotes = async (
     .select()
     .from(notes)
     .where(eq(notes.author, userId))
-    .orderBy(desc(notes.created_at))
+    .orderBy(asc(notes.created_at))
     .limit(limit)
     .offset(offset);
 
@@ -32,4 +32,19 @@ const getPaginatedNotes = async (
   };
 };
 
-export default getPaginatedNotes;
+const getAllNotes = async (userId: number) => {
+  const results = await db.query.notes.findMany({
+    where: eq(notes.author, userId),
+  });
+  const transform = results.map(({ created_at, updated_at, ...rest }) => ({
+    ...rest,
+    createdAt: created_at,
+    updatedAt: updated_at,
+  }));
+
+  return transform;
+};
+
+const noteService = { getPaginatedNotes, getAllNotes };
+
+export default noteService;
