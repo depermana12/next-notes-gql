@@ -5,11 +5,11 @@ const { Pool } = pg;
 import * as dbSchema from "./schema";
 
 const pool = new Pool({
-  database: "gqlnotes",
-  user: "postgres",
-  password: "nextgql",
-  host: "localhost",
-  port: 5432,
+  database: process.env.DB_NAME || "gqlnotes",
+  user: process.env.DB_USER || "postgres",
+  password: process.env.DB_PASS || "nextgql",
+  host: process.env.DB_HOST || "localhost",
+  port: Number(process.env.DB_PORT) || 5432,
 });
 
 const db = drizzle({ client: pool, schema: dbSchema });
