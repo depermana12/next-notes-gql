@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import db from "@/app/db/db";
 import { users, notes, tags, InsertNote, SelectNote } from "@/app/db/schema";
-import { eq, and, like, or } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { authContext } from "@/app/types/types";
 import { signUp, signIn } from "@/app/utils/auth";
 import { GraphQLError } from "graphql";
@@ -47,18 +47,7 @@ const resolvers = {
       if (!ctx.user)
         throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
 
-      const note = await db.query.notes.findFirst({
-        where: and(eq(notes.id, id), eq(notes.author, ctx.user.id)),
-      });
-
-      if (!note)
-        throw new GraphQLError("Note not found", { extensions: { code: 404 } });
-
-      return {
-        ...note,
-        createdAt: note.created_at,
-        updatedAt: note.updated_at,
-      };
+      return await noteService.getNoteById(id, ctx.user.id);
     },
     searchNotes: async (
       _: any,
@@ -69,19 +58,7 @@ const resolvers = {
         throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
       }
 
-      const result = await db.query.notes.findMany({
-        where: and(
-          eq(notes.author, ctx.user.id),
-          or(
-            (like(notes.title, `%${term}%`), like(notes.content, `%${term}%`)),
-          ),
-        ),
-      });
-      return result.map((note) => ({
-        ...note,
-        createdAt: note.created_at,
-        updatedAt: note.updated_at,
-      }));
+      return await noteService.searchNotes(term, ctx.user.id);
     },
     tags: async (_: any, __: any, ctx: authContext) => {
       if (!ctx.user) {
