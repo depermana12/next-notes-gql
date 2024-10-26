@@ -1,36 +1,114 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Notes GraphQL App
+
+This project is a Next.js-based GraphQL application using PostgreSQL as the database. Docker Compose is used to manage services and simplify setup. Follow these instructions to set up and run the app in a Docker environment.
+
+## Prerequisites
+
+Ensure you have the following installed on your system:
+
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the Repository**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+   ```bash
+   git clone https://github.com/depermana12/next-notes-gql.git
+
+   cd next-notes-gql
+   ```
+
+2. **Setup environment variables**
+
+Create a .env file in the root directory (if it doesn't exist) and populate it with your configuration. An example configuration is:
+
+```
+DB_PASS=nextgql
+DB_USER=postgres
+DB_NAME=gqlnotes
+DB_HOST=db          # Use the Docker service name here
+DB_PORT=5432
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This configuration allows Docker containers to connect to each other using service names.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Build and start services**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Use Docker compose to build and start the services:
 
-## Learn More
+```
+docker-compose up --build
+```
 
-To learn more about Next.js, take a look at the following resources:
+```
+docker-compose up --build -d
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+--build flag: built firstime or rebuilt if there are changes in the Dockerfile.
+-d flag: to run the services in detached mode.
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Once the services are running, the app should be accessible at http://localhost:3000.
 
-## Deploy on Vercel
+## Migrate database table
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+After the containers are up, you need to push the schema in drizzle ORM to PostgreSQL. You can do this by access a shell inside a the web running container using the following command:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Check the name/sha of the running process**
+
+```
+docker ps
+```
+
+2. **Access shell inside web container**
+
+```
+docker exec -it <container_name> /bin/bash
+```
+
+3. **Push schema to db by running**
+
+```
+npm run push:db
+```
+
+## Access the postgres container
+
+1.  **To connect to the PostgreSQL database using psql:**
+
+```
+docker compose exec -it db psql -U postgres -d gqlnotes
+```
+
+2. **Check table after migration**
+
+```
+\d
+```
+
+you can running the sql here
+
+## Starting and Stopping Containers
+
+- To start and rebuild services: `docker compose up --build`
+- To start services after rebuild: `dokcer compose up`
+- To start services in detached mode, add flag: `-d`
+
+## Testing the GraphQL API
+
+You can interact with the GraphQL API directly to test different queries and mutations by visiting the Apollo Server at: http://localhost:3000/api/graphql
+
+## Tech Stack
+
+- Frontend: Next.js, React, Urql, Shadcn UI, Tailwind CSS
+- Backend: Node.js, GraphQL, Drizzle ORM, PostgreSQL, Apollo Server
+- Authentication: JSON Web Token (JWT)
+- State Management: React Context
+
+## License
+
+This project is licensed under the MIT License.
+
+This `README.md` provides instructions to clone, set up, and run the application with Docker, including pushing the database schema after starting the services. Adjust repository details, URLs, and any other project-specific values as needed.
