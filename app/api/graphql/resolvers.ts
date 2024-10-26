@@ -47,7 +47,9 @@ const resolvers = {
       if (!ctx.user)
         throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
 
-      return await noteService.getNoteById(id, ctx.user.id);
+      const notes = await noteService.getNoteById(id, ctx.user.id);
+      console.log(notes);
+      return notes;
     },
     searchNotes: async (
       _: any,
@@ -120,18 +122,7 @@ const resolvers = {
         throw new GraphQLError("Unauthorized", { extensions: { code: 401 } });
       }
 
-      const newNote = await db
-        .insert(notes)
-        .values({ ...input, author: ctx.user.id })
-        .returning({
-          id: notes.id,
-          title: notes.title,
-          content: notes.content,
-          createdAt: notes.created_at,
-          updatedAt: notes.updated_at,
-        });
-
-      return newNote[0];
+      return await noteService.createNote(input, ctx.user.id);
     },
     updateNote: async (
       _: any,

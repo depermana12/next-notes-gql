@@ -1,6 +1,6 @@
 import db from "@/app/db/db";
 import { notes } from "@/app/db/schema";
-import { count, eq, asc, and, like, or } from "drizzle-orm";
+import { count, eq, and, like, or, desc } from "drizzle-orm";
 import { GraphQLError } from "graphql";
 
 const getPaginatedNotes = async (
@@ -12,7 +12,7 @@ const getPaginatedNotes = async (
     .select()
     .from(notes)
     .where(eq(notes.author, userId))
-    .orderBy(asc(notes.created_at))
+    .orderBy(desc(notes.created_at))
     .limit(limit)
     .offset(offset);
 
@@ -87,11 +87,33 @@ const searchNotes = async (term: string, userId: number) => {
   return transform;
 };
 
+type AddNote = {
+  title: string;
+  content: string;
+  author: number;
+};
+
+const createNote = async (note: AddNote, userId: number) => {
+  const newNote = await db
+    .insert(notes)
+    .values({ ...note, author: userId })
+    .returning({
+      id: notes.id,
+      title: notes.title,
+      content: notes.content,
+      author: notes.author,
+      createdAt: notes.created_at,
+      updatedAt: notes.updated_at,
+    });
+  return newNote[0];
+};
+
 const noteService = {
   getPaginatedNotes,
   getAllNotes,
   getNoteById,
   searchNotes,
+  createNote,
 };
 
 export default noteService;
